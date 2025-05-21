@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <!-- Error container -->
+    <div class="col-12 mb-4 d-none" id="error-container">
+        <div class="alert alert-danger" role="alert">
+            <svg width="24" height="24" class="me-2">
+                <use xlink:href="#icon-alert"></use>
+            </svg>
+            <span id="error-message">Error loading weather data. Please try again.</span>
+        </div>
+    </div>
+
+    <!-- Weather container -->
+    <div class="col-12" id="weather-container">
+        <!-- Current weather card -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card weather-card condition-{% if current_weather.main|lower in ['clear', 'clouds', 'rain', 'snow'] %}{{ current_weather.main|lower }}{% else %}clear{% endif %}">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <h2 class="mb-1">
+                                        <svg width="24" height="24" class="me-2">
+                                            <use xlink:href="#icon-map-pin"></use>
+                                        </svg>
+                                        <span id="current-location" data-location="{{ location }}">{{ current_weather.location }}, {{ current_weather.country }}</span>
+                                    </h2>
+                                    {% if current_user.is_authenticated %}
+                                    <form method="POST" action="{{ url_for('add_favorite') }}" class="ms-3">
+                                        <input type="hidden" name="location_name" value="{{ current_weather.location }}, {{ current_weather.country }}">
+                                        <input type="hidden" name="latitude" value="{{ current_weather.latitude if current_weather.latitude else '' }}">
+                                        <input type="hidden" name="longitude" value="{{ current_weather.longitude if current_weather.longitude else '' }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-light">
+                                            <svg width="16" height="16">
+                                                <use xlink:href="#icon-star"></use>
+                                            </svg>
+                                            Add to Favorites
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                                <p class="text-muted mb-0">
+                                    <svg width="16" height="16" class="me-1">
+                                        <use xlink:href="#icon-clock"></use>
+                                    </svg>
+                                    {{ current_weather.timestamp|int|timestamp_to_date }}
+                                </p>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
+                                <div class="temperature-container text-center me-4">
+                                    <span class="temperature-display" id="current-temp">{{ current_weather.temperature }}</span>
+                                    <span class="temperature-unit fs-4">°{% if units == 'metric' %}C{% else %}F{% endif %}</span>
+                                </div>
+                                <div class="weather-icon-container text-center">
+                                    <img src="https://openweathermap.org/img/wn/{{ current_weather.icon }}@2x.png" 
+                                         alt="{{ current_weather.description }}" 
+                                         class="weather-icon-large"
+                                         id="current-weather-icon">
+                                    <p class="mb-0 fs-5 fw-bold" id="current-weather-desc">{{ current_weather.description|capitalize }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather metrics -->
+        <div class="row mb-4">
+            <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                <div class="weather-metric">
+                    <div class="d-flex align-items-center">
+                        <svg width="24" height="24" class="metric-icon">
+                            <use xlink:href="#icon-thermometer"></use>
+                        </svg>
+                        <div>
+                            <p class="mb-0 text-muted">Feels Like</p>
+                            <h4 class="mb-0"><span id="feels-like">{{ current_weather.feels_like }}</span>°{% if units == 'metric' %}C{% else %}F{% endif %}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                <div class="weather-metric">
+                    <div class="d-flex align-items-center">
+                        <svg width="24" height="24" class="metric-icon">
+                            <use xlink:href="#icon-droplet"></use>
+                        </svg>
+                        <div>
+                            <p class="mb-0 text-muted">Humidity</p>
+                            <h4 class="mb-0"><span id="humidity">{{ current_weather.humidity }}</span>%</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                <div class="weather-metric">
+                    <div class="d-flex align-items-center">
+                        <svg width="24" height="24" class="metric-icon">
+                            <use xlink:href="#icon-wind"></use>
+                        </svg>
+                        <div>
+                            <p class="mb-0 text-muted">Wind</p>
+                            <h4 class="mb-0"><span id="wind-speed">{{ current_weather.wind_speed }}</span> {% if units == 'metric' %}m/s{% else %}mph{% endif %}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="weather-metric">
+                    <div class="d-flex align-items-center">
+                        <svg width="24" height="24" class="metric-icon">
+                            <use xlink:href="#icon-gauge"></use>
+                        </svg>
+                        <div>
+                            <p class="mb-0 text-muted">Pressure</p>
+                            <h4 class="mb-0"><span id="pressure">{{ current_weather.pressure }}</span> hPa</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts section -->
+        <div class="row mb-4">
+            <div class="col-md-8 mb-3 mb-md-0">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Temperature Forecast</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="temperature-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Humidity</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="humidity-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5-day forecast section -->
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-3">5-Day Forecast</h3>
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="row g-0 forecast-container" id="forecast-container">
+                            {% for day in forecast %}
+                            <div class="col forecast-item text-center p-3">
+                                <div class="forecast-day fw-bold">{{ day.date|to_day_name }}</div>
+                                <div class="forecast-date text-muted small mb-2">{{ day.date|to_month_day }}</div>
+                                <img src="https://openweathermap.org/img/wn/{{ day.icon }}@2x.png" alt="{{ day.description }}" class="forecast-icon mb-2" width="50">
+                                <div class="forecast-temp fw-bold">{{ day.avg_temp }}°</div>
+                                <div class="forecast-desc small text-muted">{{ day.description|capitalize }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

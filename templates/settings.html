@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-8 mx-auto">
+        <h2>Account Settings</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4 class="mb-0">Preferences</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('settings') }}">
+                    <div class="mb-3">
+                        <label for="default_units" class="form-label">Default Temperature Units</label>
+                        <select class="form-select" id="default_units" name="default_units">
+                            <option value="metric" {% if current_user.default_units == 'metric' %}selected{% endif %}>Celsius (°C)</option>
+                            <option value="imperial" {% if current_user.default_units == 'imperial' %}selected{% endif %}>Fahrenheit (°F)</option>
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('profile') }}" class="btn btn-secondary">Back to Profile</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <svg width="24" height="24" class="me-2">
+                        <use xlink:href="#icon-alert"></use>
+                    </svg>
+                    Error
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ error }}</p>
+                <hr>
+                <p class="mb-0">Please check the following:</p>
+                <ul>
+                    <li>Make sure the location name is spelled correctly</li>
+                    <li>Try another location</li>
+                    <li>Check your internet connection</li>
+                    <li>Verify that the weather API service is operational</li>
+                </ul>
+                <div class="text-center mt-4">
+                    <a href="/" class="btn btn-primary">Go back to homepage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

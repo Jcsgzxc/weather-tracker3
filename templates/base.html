@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Tracker Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- SVG Icon sprites -->
+    <div style="display: none;">
+        {% include 'images/weather_icons.svg' ignore missing %}
+    </div>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <svg class="me-2" width="24" height="24">
+                    <use xlink:href="#icon-cloud"></use>
+                </svg>
+                Weather Tracker
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="refresh-btn">
+                            <svg width="16" height="16">
+                                <use xlink:href="#icon-refresh"></use>
+                            </svg>
+                            Refresh
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link units-toggle" href="#" id="units-toggle" data-units="{{ units }}">
+                            <svg width="16" height="16">
+                                <use xlink:href="#icon-thermometer"></use>
+                            </svg>
+                            {% if units == 'metric' %}°C{% else %}°F{% endif %}
+                        </a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg width="16" height="16" class="me-1">
+                                <use xlink:href="#icon-settings"></use>
+                            </svg>
+                            {{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('settings') }}">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <form class="d-flex ms-3" id="search-form">
+                    <div class="search-container">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search location..." id="location-input" value="{{ location }}">
+                            <button class="btn btn-outline-light" type="submit">
+                                <svg width="16" height="16">
+                                    <use xlink:href="#icon-search"></use>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="card d-none" id="location-suggestions"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="container py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-3 mt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2023 Weather Tracker Dashboard</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-muted small">
+                        <span>Last updated: <span id="last-updated" class="last-updated">{{ now }}</span></span>
+                        <span class="ms-2">Weather data powered by OpenWeatherMap</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading indicator -->
+    <div class="loading-overlay d-none" id="loading-indicator">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/weather.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+/* Custom styling for Weather Dashboard */
+
+/* Search bar styling */
+.search-container {
+    position: relative;
+}
+
+#location-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: var(--bs-dark);
+    border: 1px solid var(--bs-gray-700);
+    border-radius: 0.25rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: var(--bs-gray-800);
+}
+
+/* Weather card styling */
+.weather-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.weather-card:hover {
+    transform: translateY(-5px);
+}
+
+.temperature-display {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.weather-icon-large {
+    width: 100px;
+    height: 100px;
+}
+
+/* Forecast styling */
+.forecast-container {
+    overflow-x: auto;
+}
+
+.forecast-item {
+    min-width: 110px;
+    border-radius: 0.5rem;
+    background-color: var(--bs-gray-800);
+    transition: transform 0.2s ease;
+}
+
+.forecast-item:hover {
+    transform: translateY(-3px);
+    background-color: var(--bs-gray-700);
+}
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    height: 250px;
+    margin-bottom: 1rem;
+}
+
+/* Weather metrics styling */
+.weather-metric {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--bs-gray-800);
+    transition: transform 0.2s ease;
+}
+
+.weather-metric:hover {
+    transform: translateY(-3px);
+    background-color: var(--bs-gray-700);
+}
+
+.metric-icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+
+/* Loading indicator */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Weather condition-based styling */
+.condition-clear {
+    background: linear-gradient(to bottom right, #4a90e2, #87cefa);
+}
+
+.condition-clouds {
+    background: linear-gradient(to bottom right, #6c757d, #adb5bd);
+}
+
+.condition-rain {
+    background: linear-gradient(to bottom right, #343a40, #495057);
+}
+
+.condition-snow {
+    background: linear-gradient(to bottom right, #adb5bd, #e9ecef);
+}
+
+.condition-extreme {
+    background: linear-gradient(to bottom right, #dc3545, #6c757d);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .temperature-display {
+        font-size: 2.5rem;
+    }
+    
+    .weather-icon-large {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+}
+
+/* Animation for refresh button */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.refresh-animation {
+    animation: spin 1s linear infinite;
+}
+
+/* Unit toggle button styling */
+.units-toggle {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.units-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Last updated text */
+.last-updated {
+    font-size: 0.8rem;
+    color: var(--bs-gray-600);
+}
